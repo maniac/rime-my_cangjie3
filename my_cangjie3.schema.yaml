@@ -1,0 +1,77 @@
+# Rime schema
+# encoding: utf-8
+
+schema:
+  name: 倉頡三代(改)
+  schema_id: my_cangjie3
+  version: "0.1"
+  author:
+    - 朱邦復先生
+    - 沈紅蓮女士
+  description: |
+    第三代倉頡輸入法 + 修改
+
+switches:
+  - name: extended_charset
+    states: [ 通用, 增廣 ]
+    reset: 1
+# 默認開啓Unihan全字集
+  - name: simplification
+    states: [ 繁體, 簡体 ]
+    reset: 0
+  - name: ascii_mode
+    reset: 1
+  - name: full_shape
+    states: [ 半型, 全型 ]
+    reset: 0
+
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - table_translator
+  filters:
+    - simplifier
+    - charset_filter
+    - uniquifier
+
+translator:
+  dictionary: &dict
+    my_cangjie3
+  enable_user_dict: false
+  enable_sentence: true
+  sentence_over_completion: true
+  enable_encoder: true
+# 不想自動組詞〔記錄輸入過的詞，然後變成五碼固定詞〕的話可以把上條中「true」改爲「false」
+  encode_commit_history: true
+  max_phrase_length: 5
+  preedit_format:
+    - xlit|abcdefghijklmnopqrstuvwxyz|日月金木水火土竹戈十大中一弓人心手口尸廿山女田止卜片|
+  comment_format:
+    - xlit|abcdefghijklmnopqrstuvwxyz~|日月金木水火土竹戈十大中一弓人心手口尸廿山女田止卜片・|
+  initial_quality: 0.75	# 調整該編譯器出字優先度
+
+key_binder:
+  import_preset: default
+
+recognizer:
+  import_preset: default
+  patterns:
+    email: ^[a-z][-_.0-9a-z]*@.*$
+    url: ^(www[.]|https?:|ftp:|mailto:).*$
+    punct: ^/[0-9]?[a-z]*$
+# 以「/」引導特殊符號
